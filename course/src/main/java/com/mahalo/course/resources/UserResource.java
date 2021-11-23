@@ -11,7 +11,7 @@ import com.mahalo.course.entities.User;
 @RequestMapping(value = "/users") //indica qual dado o controlador vai seguir
 public class UserResource {
 
-	@GetMapping //coletar ID 
+	@GetMapping //coletar ID : http://localhost:8080/users
 	public ResponseEntity<User> findAll() {
 		User u = new User(1L, "Maria", "maria@gmail.com", "9999999", "12345");
 		return ResponseEntity.ok().body(u);

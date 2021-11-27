@@ -1,13 +1,18 @@
 package com.mahalo.course.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "tb_user")
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -18,7 +23,10 @@ public class User implements Serializable {
 	private String email;
 	private String phone;
 	private String password;
-
+	
+	@OneToMany(mappedBy = "client") //deve ser o mesmo nome do atributo criado na entidade "Order"
+	private List<Order> orders = new ArrayList<>(); // instanciar nova coleção de ordens
+	
 	public User() {
 	}
 
@@ -30,7 +38,7 @@ public class User implements Serializable {
 		this.phone = phone;
 		this.password = password;
 	}
-
+	// Para a lista de Ordens, é necessário apenas o GET porque não há intenção de modificar a lista
 	public Long getId() {
 		return id;
 	}
@@ -70,6 +78,10 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public List<Order> getOrders() {
+		return orders;
+	}
 
 	@Override
 	public int hashCode() {
@@ -95,4 +107,6 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
+
+
 }

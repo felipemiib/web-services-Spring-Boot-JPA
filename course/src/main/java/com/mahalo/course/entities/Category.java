@@ -1,13 +1,19 @@
 package com.mahalo.course.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "tb_category")
@@ -19,16 +25,21 @@ public class Category implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nameString;
+	private String name;
+	
+	//não precisa inserir no constructor
+	@JsonIgnore
+	@ManyToMany(mappedBy = "categories") // deve inserir o nome da coleção criada na entidade "Product" chamada "categories"
+	private Set<Product> products = new HashSet<>();
 	
 	public Category() {
 		
 	}
 
-	public Category(Long id, String nameString) {
+	public Category(Long id, String name) {
 		super();
 		this.id = id;
-		this.nameString = nameString;
+		this.name = name;
 	}
 
 	public Long getId() {
@@ -39,14 +50,18 @@ public class Category implements Serializable{
 		this.id = id;
 	}
 
-	public String getNameString() {
-		return nameString;
+	public String getName() {
+		return name;
 	}
 
-	public void setNameString(String nameString) {
-		this.nameString = nameString;
+	public void setName(String name) {
+		this.name = name;
 	}
 
+	public Set<Product> getProducts() {
+		return products;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -63,6 +78,8 @@ public class Category implements Serializable{
 		Category other = (Category) obj;
 		return Objects.equals(id, other.id);
 	}
+
+
 	
 	
 

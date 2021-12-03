@@ -9,6 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -30,7 +34,12 @@ public class Product implements Serializable {
 	// SET (é uma interface) representa um conjunto que garante que não poderá ter
 	// um produto com mais
 	// de uma categoria
-	@Transient
+	
+	@ManyToMany
+	@JoinTable(name = "tb_product_category", 
+	joinColumns = @JoinColumn(name = "product_id"), //nome da coluna a ser criada 
+	inverseJoinColumns = @JoinColumn(name = "categories_id")) //nome da coluna a ser criada 
+	
 	private Set<Category> categories = new HashSet<>(); // utilizar o HashSet garante que a lista não inicie com valor
 														// NULL
 

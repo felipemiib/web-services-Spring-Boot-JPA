@@ -2,17 +2,20 @@ package com.mahalo.course.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
+import java.util.HashSet;
+//import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mahalo.course.entities.enums.OrderStatus;
 
 /*
@@ -32,7 +35,7 @@ public class Order implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
@@ -48,11 +51,17 @@ public class Order implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	private User client;
+	
+	@OneToMany(mappedBy = "id.order") //é inserido o "id" pq na classe OrderItem, possui apenas o Id, e a classe Order que possui 
+	//o restante dos atributos da Order
+	private Set<OrderItem> items = new HashSet<>();
+	
 
 	public Order() {
 
 	}
-
+	
+	
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
 		this.id = id;
@@ -78,10 +87,6 @@ public class Order implements Serializable {
 		this.moment = moment;
 	}
 
-	public User getClient() {
-		return client;
-	}
-
 	
 	//necessário converter o atributo "orderStatus" no get/set do constructor para inteiro 
 	public OrderStatus getOrderStatus() {
@@ -95,16 +100,30 @@ public class Order implements Serializable {
 		}
 		
 	}
+	
+	public User getClient() {
+		return client;
+	}
 
 	public void setClient(User client) {
 		this.client = client;
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	
+	//método GET para atributo "items"
+	public Set<OrderItem> getItems() {
+		return items;
 	}
 
+
+	//deve ser esse código quando adicionar o HASHCODE EQUALS
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -114,7 +133,12 @@ public class Order implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		return Objects.equals(id, other.id);
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 }
